@@ -3,29 +3,18 @@
 from dotenv import load_dotenv
 from google.cloud import firestore
 from langchain_google_firestore import FirestoreChatMessageHistory
-from langchain_openai import ChatOpenAI
-
-"""
-Steps to replicate this example:
-1. Create a Firebase account
-2. Create a new Firebase project
-    - Copy the project ID
-3. Create a Firestore database in the Firebase project
-4. Install the Google Cloud CLI on your computer
-    - https://cloud.google.com/sdk/docs/install
-    - Authenticate the Google Cloud CLI with your Google account
-        - https://cloud.google.com/docs/authentication/provide-credentials-adc#local-dev
-    - Set your default project to the new Firebase project you created
-5. Enable the Firestore API in the Google Cloud Console:
-    - https://console.cloud.google.com/apis/enableflow?apiid=firestore.googleapis.com&project=crewai-automation
-"""
+from langchain_google_genai import ChatGoogleGenerativeAI
+import os
 
 load_dotenv()
 
 # Setup Firebase Firestore
-PROJECT_ID = "langchain-demo-abf48"
-SESSION_ID = "user_session_new"  # This could be a username or a unique ID
+PROJECT_ID = "langchain-48207"
+SESSION_ID = "user_session_new"
 COLLECTION_NAME = "chat_history"
+
+# Set the path to your service account key file
+# os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "path/to/your/service-account-key.json"
 
 # Initialize Firestore Client
 print("Initializing Firestore Client...")
@@ -42,8 +31,7 @@ print("Chat History Initialized.")
 print("Current Chat History:", chat_history.messages)
 
 # Initialize Chat Model
-model = ChatOpenAI()
-
+model = ChatGoogleGenerativeAI(model="gemini-1.5-flash") # type: ignore
 print("Start chatting with the AI. Type 'exit' to quit.")
 
 while True:
@@ -54,6 +42,6 @@ while True:
     chat_history.add_user_message(human_input)
 
     ai_response = model.invoke(chat_history.messages)
-    chat_history.add_ai_message(ai_response.content)
+    chat_history.add_ai_message(ai_response.content) # type: ignore
 
     print(f"AI: {ai_response.content}")
