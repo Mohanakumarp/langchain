@@ -2,13 +2,13 @@ from dotenv import load_dotenv
 from langchain.prompts import ChatPromptTemplate
 from langchain.schema.output_parser import StrOutputParser
 from langchain.schema.runnable import RunnableLambda
-from langchain_openai import ChatOpenAI
+from langchain_google_genai import GoogleGenerativeAI
 
 # Load environment variables from .env
 load_dotenv()
 
 # Create a ChatOpenAI model
-model = ChatOpenAI(model="gpt-4o")
+model = GoogleGenerativeAI(model="gemini-1.5-flash")# type:ignore
 
 # Define prompt templates
 prompt_template = ChatPromptTemplate.from_messages(
@@ -19,11 +19,11 @@ prompt_template = ChatPromptTemplate.from_messages(
 )
 
 # Define additional processing steps using RunnableLambda
-uppercase_output = RunnableLambda(lambda x: x.upper())
-count_words = RunnableLambda(lambda x: f"Word count: {len(x.split())}\n{x}")
+uppercase_output = RunnableLambda(lambda x: x.upper()) # type: ignore
+count_words = RunnableLambda(lambda x: f"Word count: {len(x.split())}\n{x}")# type: ignore
 
 # Create the combined chain using LangChain Expression Language (LCEL)
-chain = prompt_template | model | StrOutputParser() | uppercase_output | count_words
+chain = prompt_template | model | StrOutputParser() | uppercase_output | count_words 
 
 # Run the chain
 result = chain.invoke({"topic": "lawyers", "joke_count": 3})
