@@ -1,12 +1,12 @@
 from dotenv import load_dotenv
 from langchain.prompts import ChatPromptTemplate
 from langchain_openai import ChatOpenAI
-
+from langchain_google_genai import ChatGoogleGenerativeAI
 # Load environment variables from .env
 load_dotenv()
 
 # Create a ChatOpenAI model
-model = ChatOpenAI(model="gpt-4o")
+model = ChatGoogleGenerativeAI(model="gemini-1.5-flash") # type: ignore #i
 
 # PART 1: Create a ChatPromptTemplate using a template string
 print("-----Prompt from Template-----")
@@ -14,6 +14,7 @@ template = "Tell me a joke about {topic}."
 prompt_template = ChatPromptTemplate.from_template(template)
 
 prompt = prompt_template.invoke({"topic": "cats"})
+print(prompt)
 result = model.invoke(prompt)
 print(result.content)
 
@@ -24,7 +25,7 @@ Human: Tell me a {adjective} short story about a {animal}.
 Assistant:"""
 prompt_multiple = ChatPromptTemplate.from_template(template_multiple)
 prompt = prompt_multiple.invoke({"adjective": "funny", "animal": "panda"})
-
+print(prompt)
 result = model.invoke(prompt)
 print(result.content)
 
@@ -36,5 +37,6 @@ messages = [
 ]
 prompt_template = ChatPromptTemplate.from_messages(messages)
 prompt = prompt_template.invoke({"topic": "lawyers", "joke_count": 3})
+print(prompt)
 result = model.invoke(prompt)
 print(result.content)
